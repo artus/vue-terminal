@@ -1,5 +1,5 @@
 <template>
-<div class="vue-terminal" @click="focus">
+<div id="vue-terminal" class="vue-terminal" @click="focus">
         <ul class="vue-terminal-output-container">
             <li :key="entry" v-for="entry in output">
                 <pre :key="line" v-for="line in entry.split('\\n')"><span>{{line}}</span></pre>
@@ -14,7 +14,6 @@
 
 <script>
 export default {
-
   /**
    * Properties passed from parent.
    */
@@ -89,11 +88,10 @@ A bit of everything else:
     }
   },
 
-  /** 
+  /**
    * Methods.
    */
   methods: {
-
     /**
      * Check if the contenteditable span is in focus.
      */
@@ -112,7 +110,7 @@ A bit of everything else:
 
     /**
      * Perform specified actions when a keyUp event is fired.
-     * 
+     *
      * @param {eventArgs} e - The Event object.
      */
     keyUp: function(e) {
@@ -176,6 +174,11 @@ A bit of everything else:
 
       document.getElementById(this.inputId).innerHTML = "";
       this.input = "";
+
+      Vue.nextTick(function() {
+        document.getElementById("vue-terminal").scrollBy(0, 10000);
+        document.getElementsByClassName("vue-terminal-input")[0].focus();
+      });
     },
 
     /**

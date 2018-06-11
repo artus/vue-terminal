@@ -47,6 +47,8 @@ body
 
     font-family: var(--vt-font-family);
     font-size: var(--vt-font-size);
+
+    overflow-y: scroll;
 }
 
 .vue-terminal *

@@ -1,7 +1,7 @@
 let vueTerminal = new Vue({
     el: "#vue-terminal",
     template: `
-    <div class="vue-terminal" @click="focus">
+    <div id="vue-terminal" class="vue-terminal" @click="focus">
         <ul class="vue-terminal-output-container">
             <li v-for="entry in output">
                 <pre v-for="line in entry.split('\\n')"><span>{{line}}</span></pre>
@@ -123,6 +123,11 @@ A bit of everything else:
 
             document.getElementById(this.inputId).innerHTML = "";
             this.input = "";
+
+            Vue.nextTick(function () {
+                document.getElementById("vue-terminal").scrollBy(0, 10000);
+                document.getElementsByClassName("vue-terminal-input")[0].focus();
+            });
         },
         previousHistory: function () {
             if (this.historyIndex + 1 > this.history.length) return;
