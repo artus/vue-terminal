@@ -28,17 +28,17 @@ $ clear
 $ ls
 $ cat`,
             "clear": "exec clear",
-            "ls" : "artus.txt skills.txt cat.txt \n",
-            "cat" : "Specify the file you want to open... \n",
-            "cat artus.txt" : `\nMy name is Artus Vranken, and I am an avid software developer.
+            "ls": "artus.txt skills.txt cat.txt \n",
+            "cat": "Specify the file you want to open... \n",
+            "cat artus.txt": `\nMy name is Artus Vranken, and I am an avid software developer.
 I'm always open to new challenges and aim to improve my skills each day.\n`,
-            "cat cat.txt" : `
+            "cat cat.txt": `
 　 ／l、     Meow :3
 ﾞ（ﾟ､ ｡ ７
 　 l、ﾞ ~ヽ
 　 じしf_, )ノ
 `,
-            "cat skills.txt" : `
+            "cat skills.txt": `
 Frontend:
     JS/html/css ★★★★
     Angular     ★★★
@@ -57,7 +57,7 @@ A bit of everything else:
     Docker      ★★★★
       -compose  ★★★
     Blockchain  ★★★
-` 
+`
         }
     },
     computed: {
@@ -70,11 +70,9 @@ A bit of everything else:
             return document.activeElement.id == this.inputId;
         },
         focus: function () {
-            // This needs to be done, leave it.
-            let div = document.getElementById(this.inputId);
-            setTimeout( function() {
-                div.focus();
-            }, 0);
+            while (document.activeElement.id != this.inputId) {
+                document.getElementById(this.inputId).focus();
+            }
         },
         keyUp: function (e) {
 
@@ -103,12 +101,15 @@ A bit of everything else:
             document.getElementById(this.inputId).innerHTML = this.input;
         },
         execute() {
+            let tempInput = this.input.replace("<br>", "");
+            tempInput = tempInput.replace("<div>", "");
+            tempInput = tempInput.replace("</div>", "");
             this.historyIndex = 0;
-            this.history.unshift(this.input);
+            this.history.unshift(tempInput);
 
-            let tempOutput = this.commands[this.input];
+            let tempOutput = this.commands[tempInput];
 
-            if (typeof tempOutput == "undefined") tempOutput = `Couldn't find command: ${this.input}`
+            if (typeof tempOutput == "undefined") tempOutput = `Couldn't find command: ${tempInput}`
 
             switch (tempOutput) {
                 case "exec clear":
@@ -117,7 +118,7 @@ A bit of everything else:
                     break;
             }
 
-            this.output.push(`${this.prefix} ${this.input}`);
+            this.output.push(`${this.prefix} ${tempInput}`);
             this.output.push(tempOutput);
 
             document.getElementById(this.inputId).innerHTML = "";
