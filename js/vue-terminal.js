@@ -1,11 +1,15 @@
-new Vue({
+let vueTerminal = new Vue({
     el: "#vue-terminal",
     template: `
-    <div class="vue-terminal">
-        <div class="vue-terminal-output"></div>
+    <div class="vue-terminal" @click="focus">
+        <ul class="vue-terminal-output-container">
+            <li v-for="entry in output">
+                <pre v-for="line in entry.split('\\n')"><span>{{line}}</span></pre>
+            </li>
+        </ul>
         <div class="vue-terminal-input-container">
             <div class="vue-terminal-prefix">{{prefix}}</div>
-            <div class="vue-terminal-input"></div>
+            <span :id="inputId" :class="{ focused : isFocused }" @keyup="keyUp" class="vue-terminal-input" contenteditable="true"></span>
         </div>
     </div>
     `,
@@ -13,8 +17,48 @@ new Vue({
         user: "visitor@artus.github.io",
         directory: "/~",
         suffix: "$",
+        history: new Array(),
+        historyIndex: 0,
         input: "",
-        output: ""
+        output: new Array(),
+        inputId: Math.floor(Math.random() * 1000),
+        commands: {
+            "help": `$ help
+$ clear
+$ ls
+$ cat`,
+            "clear": "exec clear",
+            "ls" : "artus.txt skills.txt cat.txt \n",
+            "cat" : "Specify the file you want to open... \n",
+            "cat artus.txt" : `\nMy name is Artus Vranken, and I am an avid software developer.
+I'm always open to new challenges and aim to improve my skills each day.\n`,
+            "cat cat.txt" : `
+　 ／l、     Meow :3
+ﾞ（ﾟ､ ｡ ７
+　 l、ﾞ ~ヽ
+　 じしf_, )ノ
+`,
+            "cat skills.txt" : `
+Frontend:
+    JS/html/css ★★★★
+    Angular     ★★★
+    Vue         ★★★
+
+Backend:
+    Java        ★★★★
+    Spring      ★★
+    Node.js     ★★★★
+
+A bit of both:
+    TypeScript  ★★★
+
+A bit of everything else:
+    Bash/Sh     ★★★★
+    Docker      ★★★★
+      -compose  ★★★
+    Blockchain  ★★★
+` 
+        }
     },
     computed: {
         prefix: function () {
@@ -22,6 +66,81 @@ new Vue({
         }
     },
     methods: {
+        isFocused: function () {
+            return document.activeElement.id == this.inputId;
+        },
+        focus: function () {
+            // This needs to be done, leave it.
+            let div = document.getElementById(this.inputId);
+            setTimeout( function() {
+                div.focus();
+            }, 0);
+        },
+        keyUp: function (e) {
 
+            switch (e.keyCode) {
+                case 13:
+                    e.preventDefault();
+                    this.execute();
+                    break;
+
+                case 38:
+                    e.preventDefault();
+                    this.previousHistory();
+                    break;
+                case 40:
+                    e.preventDefault();
+                    this.nextHistory();
+                    break;
+            }
+
+            this.updateInputValue();
+        },
+        updateInputValue: function () {
+            this.input = document.getElementById(this.inputId).innerHTML;
+        },
+        updateFieldValue: function () {
+            document.getElementById(this.inputId).innerHTML = this.input;
+        },
+        execute() {
+            this.historyIndex = 0;
+            this.history.unshift(this.input);
+
+            let tempOutput = this.commands[this.input];
+
+            if (typeof tempOutput == "undefined") tempOutput = `Couldn't find command: ${this.input}`
+
+            switch (tempOutput) {
+                case "exec clear":
+                    this.clear();
+                    return;
+                    break;
+            }
+
+            this.output.push(`${this.prefix} ${this.input}`);
+            this.output.push(tempOutput);
+
+            document.getElementById(this.inputId).innerHTML = "";
+            this.input = "";
+        },
+        previousHistory: function () {
+            if (this.historyIndex + 1 > this.history.length) return;
+            this.input = this.history[this.historyIndex++];
+            this.updateFieldValue();
+        },
+        nextHistory: function () {
+            if (this.historyIndex - 1 < 0) return;
+            this.input = this.history[this.historyIndex--];
+            this.updateFieldValue();
+        },
+        clearInput: function () {
+            document.getElementById(this.inputId).innerHTML = "";
+            this.input = "";
+        },
+        clear: function () {
+            this.output = new Array();
+            this.clearInput();
+        },
     }
-})
+
+});

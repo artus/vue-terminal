@@ -3,14 +3,15 @@
 :root
 {
     --vt-font-family: 'VT323', monospace;
+    --vt-font-size: 20px;
 
     --vt-margin: 10px;
     --vt-padding: 5px;
 
-    --vt-border: 3px solid green;
+    --vt-border: 3px solid lightgreen;
 
     --vt-background-color: black;
-    --vt-color: green;
+    --vt-color: lightgreen;
 }
 
 *
@@ -43,8 +44,9 @@ body
 
     background-color: var(--vt-background-color);
     color: var(--vt-color);
-    font-family: var(--vt-font-family);
 
+    font-family: var(--vt-font-family);
+    font-size: var(--vt-font-size);
 }
 
 .vue-terminal *
@@ -52,9 +54,33 @@ body
     float: left;
 }
 
-.vue-terminal-output
+.vue-terminal-output-container
 {
     width: 100%;
+}
+
+.vue-terminal-output-container li
+{
+    list-style: none;
+    text-decoration: none;
+    width: 100%;
+    padding: var(--vt-padding);
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.vue-terminal-output-container li pre
+{
+    width: 100%;
+    padding: 0;
+}
+
+.vue-terminal-output-container li pre span
+{
+    width: 100%;
+    font-family: var(--vt-font-family);
+    font-size: var(--vt-font-size);
+    white-space: pre;
 }
 
 .vue-terminal-input-container
@@ -64,15 +90,37 @@ body
     display: flex;
     flex-direction: row;
 
-    justify-content: flex;
+    justify-content: flex-start;
 }
 
 .vue-terminal-prefix
 {
-    
+    padding: var(--vt-padding);
+    padding-top: 0;
+    padding-bottom: 0;
+
+    flex-shrink: 1;
 }
 
 .vue-terminal-input 
 {
+    border: 0;
+    outline: none;
 
+    background: transparent;
+
+    font-family: var(--vt-font-family);
+    font-size: var(--vt-font-size);
+    color: transparent;
+    text-shadow: 0 0 0 var(--vt-color);
+
+    padding: 0;
+    margin: var(--vt-padding);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.focused 
+{
+    border-right: 10px solid var(--vt-color);
 }
