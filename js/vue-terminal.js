@@ -109,7 +109,7 @@ A bit of everything else:
 
             let tempOutput = this.commands[tempInput];
 
-            if (typeof tempOutput == "undefined") tempOutput = `Couldn't find command: ${tempInput}`
+            if (typeof tempOutput == "undefined") tempOutput = `Couldn't find command: ${tempInput}\nType 'help' for more information.`;
 
             switch (tempOutput) {
                 case "exec clear":
