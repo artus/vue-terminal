@@ -14,17 +14,14 @@
 
 <script>
 export default {
-  data: function() {
-    return {
-      user: "visitor@artus.github.io",
-      directory: "/~",
-      suffix: "$",
-      history: new Array(),
-      historyIndex: 0,
-      input: "",
-      output: new Array(),
-      inputId: Math.floor(Math.random() * 1000),
-      commands: {
+
+  /**
+   * Properties passed from parent.
+   */
+  props: {
+    commands: {
+      type: Object,
+      default: {
         help: `$ help
 $ clear
 $ ls
@@ -61,22 +58,63 @@ A bit of everything else:
     Blockchain  ★★★
 `
       }
+    },
+    user: {
+      type: String,
+      default: "visitor@artus.github.io"
+    }
+  },
+
+  /**
+   * Data that's being tracked by this component.
+   */
+  data: function() {
+    return {
+      directory: "/~",
+      suffix: "$",
+      history: new Array(),
+      historyIndex: 0,
+      input: "",
+      output: new Array(),
+      inputId: Math.floor(Math.random() * 1000)
     };
   },
+
+  /**
+   * Computed values.
+   */
   computed: {
     prefix: function() {
       return `${this.user}${this.directory} ${this.suffix}`;
     }
   },
+
+  /** 
+   * Methods.
+   */
   methods: {
+
+    /**
+     * Check if the contenteditable span is in focus.
+     */
     isFocused: function() {
       return document.activeElement.id == this.inputId;
     },
+
+    /**
+     * Set the focus to the contenteditable span.
+     */
     focus: function() {
       while (document.activeElement.id != this.inputId) {
         document.getElementById(this.inputId).focus();
       }
     },
+
+    /**
+     * Perform specified actions when a keyUp event is fired.
+     * 
+     * @param {eventArgs} e - The Event object.
+     */
     keyUp: function(e) {
       switch (e.keyCode) {
         case 13:
@@ -96,13 +134,25 @@ A bit of everything else:
 
       this.updateInputValue();
     },
+
+    /**
+     * Update the "input" data-field based on the contents of the terminal input field.
+     */
     updateInputValue: function() {
       this.input = document.getElementById(this.inputId).innerHTML;
     },
+
+    /**
+     * Update the terminal input field based on the contents of the "input" data-field.
+     */
     updateFieldValue: function() {
       document.getElementById(this.inputId).innerHTML = this.input;
     },
-    execute() {
+
+    /**
+     * Execute functions entered by the user, based on the "commands" data-object.
+     */
+    execute: function() {
       let tempInput = this.input.replace("<br>", "");
       tempInput = tempInput.replace("<div>", "");
       tempInput = tempInput.replace("</div>", "");
@@ -127,20 +177,36 @@ A bit of everything else:
       document.getElementById(this.inputId).innerHTML = "";
       this.input = "";
     },
+
+    /**
+     * Load previous command from history.
+     */
     previousHistory: function() {
       if (this.historyIndex + 1 > this.history.length) return;
       this.input = this.history[this.historyIndex++];
       this.updateFieldValue();
     },
+
+    /**
+     * Load next command from history.
+     */
     nextHistory: function() {
       if (this.historyIndex - 1 < 0) return;
       this.input = this.history[this.historyIndex--];
       this.updateFieldValue();
     },
+
+    /**
+     * Clear the input, both in the view as in the Vue instance.
+     */
     clearInput: function() {
       document.getElementById(this.inputId).innerHTML = "";
       this.input = "";
     },
+
+    /**
+     * Clear the whole terminal screen.
+     */
     clear: function() {
       this.output = new Array();
       this.clearInput();
@@ -165,7 +231,8 @@ A bit of everything else:
   --vt-color: lightgreen;
 }
 
-.vue-terminal, .vue-terminal * {
+.vue-terminal,
+.vue-terminal * {
   margin: 0;
   padding: 0;
 
